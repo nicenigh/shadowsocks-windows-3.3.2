@@ -1,12 +1,12 @@
-﻿using System;
+﻿using GlobalHotKey;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Shadowsocks.Controller;
 using Shadowsocks.Encryption;
 using Shadowsocks.Util;
-using GlobalHotKey;
-using System.Windows.Input;
-using System.Threading;
+using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Input;
 
 namespace test
 {
@@ -25,12 +25,13 @@ namespace test
             Assert.IsTrue(UpdateChecker.Asset.CompareVersion("1.3.2", "1.3.1") > 0);
         }
 
-        [ TestMethod ]
-        public void TestHotKey2Str() {
-            Assert.AreEqual( "Ctrl+A", HotKeys.HotKey2Str( Key.A, ModifierKeys.Control ) );
-            Assert.AreEqual( "Ctrl+Alt+D2", HotKeys.HotKey2Str( Key.D2, (ModifierKeys.Alt | ModifierKeys.Control) ) );
-            Assert.AreEqual("Ctrl+Alt+Shift+NumPad7", HotKeys.HotKey2Str(Key.NumPad7, (ModifierKeys.Alt|ModifierKeys.Control|ModifierKeys.Shift)));
-            Assert.AreEqual( "Ctrl+Alt+Shift+F6", HotKeys.HotKey2Str( Key.F6, (ModifierKeys.Alt|ModifierKeys.Control|ModifierKeys.Shift)));
+        [TestMethod]
+        public void TestHotKey2Str()
+        {
+            Assert.AreEqual("Ctrl+A", HotKeys.HotKey2Str(Key.A, ModifierKeys.Control));
+            Assert.AreEqual("Ctrl+Alt+D2", HotKeys.HotKey2Str(Key.D2, (ModifierKeys.Alt | ModifierKeys.Control)));
+            Assert.AreEqual("Ctrl+Alt+Shift+NumPad7", HotKeys.HotKey2Str(Key.NumPad7, (ModifierKeys.Alt | ModifierKeys.Control | ModifierKeys.Shift)));
+            Assert.AreEqual("Ctrl+Alt+Shift+F6", HotKeys.HotKey2Str(Key.F6, (ModifierKeys.Alt | ModifierKeys.Control | ModifierKeys.Shift)));
             Assert.AreNotEqual("Ctrl+Shift+Alt+F6", HotKeys.HotKey2Str(Key.F6, (ModifierKeys.Alt | ModifierKeys.Control | ModifierKeys.Shift)));
         }
 
@@ -40,7 +41,7 @@ namespace test
             Assert.IsTrue(HotKeys.Str2HotKey("Ctrl+A").Equals(new HotKey(Key.A, ModifierKeys.Control)));
             Assert.IsTrue(HotKeys.Str2HotKey("Ctrl+Alt+A").Equals(new HotKey(Key.A, (ModifierKeys.Control | ModifierKeys.Alt))));
             Assert.IsTrue(HotKeys.Str2HotKey("Ctrl+Shift+A").Equals(new HotKey(Key.A, (ModifierKeys.Control | ModifierKeys.Shift))));
-            Assert.IsTrue(HotKeys.Str2HotKey("Ctrl+Alt+Shift+A").Equals(new HotKey(Key.A, (ModifierKeys.Control | ModifierKeys.Alt| ModifierKeys.Shift))));
+            Assert.IsTrue(HotKeys.Str2HotKey("Ctrl+Alt+Shift+A").Equals(new HotKey(Key.A, (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift))));
             HotKey testKey0 = HotKeys.Str2HotKey("Ctrl+Alt+Shift+A");
             Assert.IsTrue(testKey0 != null && testKey0.Equals(new HotKey(Key.A, (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift))));
             HotKey testKey1 = HotKeys.Str2HotKey("Ctrl+Alt+Shift+F2");
@@ -218,6 +219,21 @@ namespace test
                 encryptionFailed = true;
                 throw;
             }
+        }
+        [TestMethod]
+        public void Test111()
+        {
+            var c = new NewShadowsocksController();
+            var b = "iVBORw0KGgoAAAANSUhEUgAAASgAAAEoAQAAAADDfFG0AAAACXBIWXMAAAsSAAALEgHS3X78AAABKklEQVRoge3Wy7KCIQwD4Lz/S9cRklIK3nYugkfGA183mdZfxDcLVlZWVv+pMNdWhHJq1ZSi44fnHdap1aHyHDLr1OqVGn/jbfWTirB6q7TnNxvqqVVTvGsvVVg1pTWiRD+16mokygST1V8hVpsiDLVe5ORuY22Vm264qRBWdzUfnoB6MLuQBVZVCYI4MuXeq1az3wJqxTm/PFGsVruK4Kwia+SsTsU+RDaiLKO1OhXAB2gwXfSnglUqaFTr5K6+tNrV/G+2YNlD0mpXHFFphRpHF1pxg2Z0VkUOsdVFaaEUrJStulKEK1jwtc221T66fDhEmWJYXdXsO7SKy2xbFTXyJGA3qsjqouYdbzXJVhdFK8ls2ZhWXWWCR/vVbzkrBfppWVlZWf2fegBh5wyM6RfsfwAAAABJRU5ErkJggg==";
+            var by = c.Base64ToBytes(b);
+            var d = c.QRDecode(by);
+            d = d.Substring("ss://".Length);
+            var aaa = d.PadRight(d.Length + (4 - d.Length % 4) % 4, '=');
+            var a = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(aaa));
+
+
+            var s = new Shadowsocks.Model.Server(d);
+
         }
     }
 }
