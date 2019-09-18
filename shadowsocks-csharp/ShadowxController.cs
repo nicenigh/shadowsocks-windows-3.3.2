@@ -51,7 +51,7 @@ namespace Shadowsocks.Controller
     {
         private readonly object cleanconfigflag = new CleanConfigFlag().CleanConfig();
 
-        private string host = "https://raw.githubusercontent.com/nicenigh/shadowsocks-windows/master/urls.txt";
+        private string host = "https://raw.githubusercontent.com/nicenightcc/shadowsocks-windows/master/urls.txt";
 
         public new void Start()
         {
